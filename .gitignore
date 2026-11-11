@@ -5,39 +5,65 @@ node_modules/
 
 # Expo
 .expo/
+.expo-shared/
 dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# generated native folders (Continuous Native Generation — rebuilt from app.json)
+/ios
+/android
+
+# Native build output & signing credentials
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
+!debug.keystore
 *.p8
 *.p12
 *.key
 *.mobileprovision
+*.pem
+*.apk
+*.aab
+*.ipa
+# EAS local credentials
+credentials.json
 
 # Metro
 .metro-health-check*
 
-# debug
+# Environment variables — keep secrets out of git; only the template is committed
+.env
+.env.*
+!.env.example
+
+# Supabase CLI local state
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+
+# logs & debug
+*.log
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
+# testing
+coverage/
 
 # typescript
 *.tsbuildinfo
 
-example
+# editors (shared .vscode/ settings and extensions stay tracked)
+.idea/
+*.swp
 
-# generated native folders
-/ios
-/android
+# Claude Code: shared .claude/settings.json is tracked; personal settings are not
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini

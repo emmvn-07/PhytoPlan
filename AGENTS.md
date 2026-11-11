@@ -25,7 +25,15 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
+- Use **Expo Router** for all navigation. Routes live in the root `app/` folder — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) in `src/`, never in `app/`.
+
+## Architecture (see README "Project structure")
+
+- Screens (`app/`) stay thin: UI state only. Data and auth come from hooks/providers in `src/features/*`.
+- Only `src/services/*` may import `@/lib/supabase`. Services return models from `src/types/models.ts`.
+- Services fall back to `src/mocks/*` while the backend isn't ready; demo mode (no Supabase keys) is set in `src/constants/config.ts`.
+- Styling: NativeWind (`className`). Colors are defined once in `src/constants/colors.ts`; use the Tailwind names (`bg-primary`, `text-text-secondary`) instead of hex values. NativeWind only styles core RN components — wrap third-party components in a `View` for layout classes.
+- Icons: `lucide-react-native`, colored with `useTheme()`.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 

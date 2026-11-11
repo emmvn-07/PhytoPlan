@@ -1,56 +1,88 @@
-# Welcome to your Expo app 👋
+# PhytoPlan
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Mobile app built with **React Native + Expo (SDK 58)**, **Expo Router**, **Supabase** (auth + database), **NativeWind** (Tailwind CSS) and **Lucide** icons.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Quick start (no backend needed)
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Without Supabase keys the app runs in **demo mode**: any email/password signs in locally and screens use mock data from `src/mocks/`.
 
-### Other setup steps
+## Connecting Supabase
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+1. Create a project at https://supabase.com and copy the env file:
 
-## Learn more
+   ```bash
+   cp .env.example .env.local
+   ```
 
-To learn more about developing your project with Expo, look at the following resources:
+   Fill in the project URL and publishable (or anon) key, then restart Expo.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2. Create the schema: Supabase Dashboard → SQL Editor → run
+   [supabase/migrations/0001_profiles.sql](supabase/migrations/0001_profiles.sql).
 
-## Join the community
+## Project structure
 
-Join our community of developers creating universal apps.
+```
+app/                        Expo Router routes — thin screens only
+  _layout.tsx               Root: theme variables, AuthProvider, auth guard (Stack.Protected)
+  (auth)/                   Sign in / sign up (signed out)
+  (tabs)/                   Home / Profile (signed in)
+src/
+  components/
+    ui/                     Primitives: Text, Button, TextField, Card, Screen
+    navigation/             Tab bars (native + web)
+    demo-banner.tsx
+  features/                 Feature-specific UI + hooks
+    auth/                   AuthProvider / useAuth(), AuthLayout
+    plants/                 PlantCard, usePlants()
+  services/                 Backend access (the only place that touches Supabase)
+    auth.service.ts         Supabase auth, or local demo session
+    profile.service.ts      public.profiles
+    plants.service.ts       Placeholder — returns mock data
+  sensors/                  Reserved for hardware integration (mock SensorClient)
+  hooks/                    Shared hooks (useTheme, useColorScheme)
+  lib/                      Supabase client, small utilities (cn, dates, errors)
+  types/                    models.ts (app models), database.ts (Supabase types)
+  constants/                config.ts (env + demo mode), colors.ts (palette), theme.ts
+  mocks/                    Temporary frontend data
+  global.css                Tailwind entry
+supabase/migrations/        SQL migrations (tables, RLS, triggers)
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Data flow:** screen → feature hook / `useAuth()` → service → Supabase (or mocks).
+To connect a real table, change only the service function; hooks and screens stay the same.
+
+## Styling
+
+- Use `className` with Tailwind classes. Theme colors: `bg-background`, `bg-background-element`, `bg-background-selected`, `text-text`, `text-text-secondary`, `bg-primary`, `text-on-primary`, `border-border`, `text-danger`.
+- Colors are defined once in [src/constants/colors.ts](src/constants/colors.ts) and switch automatically for dark mode.
+- For props that need a raw color (icons, `placeholderTextColor`), use `useTheme()`.
+- NativeWind styles core React Native components only. For third-party components, put layout classes on a wrapping `View`.
+
+## Database types
+
+After changing the schema, regenerate types:
+
+```bash
+npx supabase gen types typescript --project-id <your-project-ref> > src/types/database.ts
+```
+
+## Scripts
+
+| Command              | What it does                           |
+| -------------------- | -------------------------------------- |
+| `npm start`          | Start the Expo dev server              |
+| `npm run android`    | Open on Android                        |
+| `npm run ios`        | Open on iOS                            |
+| `npm run lint`       | Lint                                   |
+| `npm run typecheck`  | TypeScript check                       |
+| `npm run check-deps` | Verify deps match the Expo SDK version |
+
+## Notes
+
+- Only `EXPO_PUBLIC_*` vars reach the app, and they ship inside the bundle — never put the Supabase secret / `service_role` key in them.
+- Security lives in Supabase **Row Level Security** policies. Enable RLS on every new table.
