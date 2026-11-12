@@ -92,4 +92,7 @@ tmp/
 Thumbs.db
 Desktop.ini
 /.agents
+design-references/
+.agents/
+.claude/
 skills-lock.json
