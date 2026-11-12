@@ -9,7 +9,7 @@ npm install
 npx expo start
 ```
 
-Without Supabase keys the app runs in **demo mode**: any email/password signs in locally and screens use mock data from `src/mocks/`.
+Login is disabled for now: the app opens straight on the Farm overview, and screens use mock data from `src/mocks/`.
 
 ## Connecting Supabase
 
@@ -28,24 +28,28 @@ Without Supabase keys the app runs in **demo mode**: any email/password signs in
 
 ```
 app/                        Expo Router routes — thin screens only
-  _layout.tsx               Root: theme variables, AuthProvider, auth guard (Stack.Protected)
-  (auth)/                   Sign in / sign up (signed out)
-  (tabs)/                   Home / Profile (signed in)
+  _layout.tsx               Root: theme variables + stack (login disabled for now)
+  index.tsx                 Redirects "/" to /farm-overview
+  (tabs)/                   Floating tab bar: farm-overview, garden-beds, agronomic-calendar,
+                            suggested-crops + insights-analytics (Insights), irrigation-control
+  butterhead-lettuce.tsx    Bed detail (stack screen, ?id=bed-0x)
 src/
   components/
-    ui/                     Primitives: Text, Button, TextField, Card, Screen
-    navigation/             Tab bars (native + web)
-    demo-banner.tsx
+    ui/                     Primitives: Text, Card, Badge, StatusDot, MetricTile, ListRow, Screen…
+    navigation/             Floating tab bar (app-tabs.tsx)
   features/                 Feature-specific UI + hooks
-    auth/                   AuthProvider / useAuth(), AuthLayout
-    plants/                 PlantCard, usePlants()
+    farm/                   Farm overview cards, useFarmOverview()
+    beds/                   BedCard, bed detail sections, useBeds()/filterBeds()
+    calendar/               Conditions hero, MonthCalendar, RecordTimeline
+    insights/               Crops/Analytics header, CropCard, GrowingConditionsCard
+    irrigation/             ReservoirCard, BedControlRow
   services/                 Backend access (the only place that touches Supabase)
-    auth.service.ts         Supabase auth, or local demo session
-    profile.service.ts      public.profiles
-    plants.service.ts       Placeholder — returns mock data
+    farm/beds/calendar/insights/irrigation.service.ts   Placeholders — return mock data
+    auth.service.ts         Supabase auth (not wired to the UI while login is disabled)
+    profile.service.ts      public.profiles (not wired to the UI yet)
   sensors/                  Reserved for hardware integration (mock SensorClient)
-  hooks/                    Shared hooks (useTheme, useColorScheme)
-  lib/                      Supabase client, small utilities (cn, dates, errors)
+  hooks/                    Shared hooks (useTheme, useColorScheme, useAsync)
+  lib/                      Supabase client, small utilities (cn, dates, numbers)
   types/                    models.ts (app models), database.ts (Supabase types)
   constants/                config.ts (env + demo mode), colors.ts (palette), theme.ts
   mocks/                    Temporary frontend data
@@ -53,7 +57,7 @@ src/
 supabase/migrations/        SQL migrations (tables, RLS, triggers)
 ```
 
-**Data flow:** screen → feature hook / `useAuth()` → service → Supabase (or mocks).
+**Data flow:** screen → feature hook → service → Supabase (or mocks).
 To connect a real table, change only the service function; hooks and screens stay the same.
 
 ## Styling

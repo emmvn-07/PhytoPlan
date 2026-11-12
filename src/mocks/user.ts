@@ -7,3 +7,6 @@ export function createMockUser(email?: string, fullName?: string): AppUser {
     fullName: fullName || 'Demo User',
   };
 }
+
+/** Signed-in user shown in the UI while login is disabled ("Good evening, Angel" / "AA"). */
+export const mockCurrentUser = createMockUser('angel@phytoplan.app', 'Angel A.');

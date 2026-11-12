@@ -8,13 +8,13 @@ import { createMockReading } from '@/mocks/sensors';
 import type { SensorReading } from '@/types/models';
 
 export interface SensorClient {
-  /** Latest reading for a plant's attached sensor, or null if none. */
-  getLatestReading(plantId: string): Promise<SensorReading | null>;
+  /** Latest reading for a garden bed's attached sensor, or null if none. */
+  getLatestReading(bedId: string): Promise<SensorReading | null>;
 }
 
 const mockSensorClient: SensorClient = {
-  async getLatestReading(plantId) {
-    return createMockReading(plantId);
+  async getLatestReading(bedId) {
+    return createMockReading(bedId);
   },
 };
 

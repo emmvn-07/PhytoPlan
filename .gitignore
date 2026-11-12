@@ -1,6 +1,6 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+
+# Dependencies
 node_modules/
 
 # Expo
@@ -10,11 +10,11 @@ dist/
 web-build/
 expo-env.d.ts
 
-# generated native folders (Continuous Native Generation — rebuilt from app.json)
-/ios
-/android
+# Generated native folders (Expo CNG)
+/ios/
+/android/
 
-# Native build output & signing credentials
+# Native build output and credentials
 .kotlin/
 *.orig.*
 *.jks
@@ -28,42 +28,68 @@ expo-env.d.ts
 *.apk
 *.aab
 *.ipa
-# EAS local credentials
 credentials.json
 
 # Metro
 .metro-health-check*
 
-# Environment variables — keep secrets out of git; only the template is committed
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# Supabase CLI local state
+# Supabase local development
 supabase/.branches/
 supabase/.temp/
 supabase/.env
+supabase/.env.*
+supabase/.profiles/
 
-# logs & debug
+# Logs and debugging
 *.log
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+pnpm-debug.log*
 
-# testing
+# Testing
 coverage/
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-# editors (shared .vscode/ settings and extensions stay tracked)
+# Editors
 .idea/
 *.swp
+*.swo
+.vscode/*.local.json
 
-# Claude Code: shared .claude/settings.json is tracked; personal settings are not
+# Claude Code - preserve shared configuration
 .claude/settings.local.json
+.claude/projects/
+.claude/todos/
+.claude/debug/
+.claude/history.jsonl
+
+# AI agent temporary files
+.agents/cache/
+.agents/tmp/
+
+# Local Figma design references
+# Uncomment to keep screenshots out of Git
+# design-references/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+.cache/
+tmp/
 
 # OS files
 .DS_Store
 Thumbs.db
 Desktop.ini
+/.agents
+skills-lock.json
